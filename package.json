@@ -1,0 +1,18 @@
+{
+  "name": "disduk-portal",
+  "version": "1.0.0",
+  "description": "Portal layanan Kependudukan & Pencatatan Sipil - Akta Kelahiran & Akta Kematian",
+  "main": "server/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/server.js",
+    "dev": "node --watch --env-file-if-exists=.env server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^2.0.1"
+  }
+}

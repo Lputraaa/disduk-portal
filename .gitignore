@@ -1,0 +1,8 @@
+node_modules/
+data/
+uploads/kelahiran/*
+uploads/kematian/*
+!uploads/kelahiran/.gitkeep
+!uploads/kematian/.gitkeep
+*.log
+.env

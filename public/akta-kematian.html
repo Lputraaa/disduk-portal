@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Permohonan Akta Kematian — Portal Layanan Dukcapil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand">
+      <div class="brand-mark">DC</div>
+      <div class="brand-text">
+        <div class="brand-title">Portal Layanan Dukcapil</div>
+        <div class="brand-sub">Kependudukan &amp; Pencatatan Sipil Online</div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="/">Beranda</a>
+      <a href="/layanan-kependudukan.html">Layanan</a>
+      <a href="/admin.html">Panel Petugas</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <div class="breadcrumb">
+    <a href="/">Beranda</a> &nbsp;/&nbsp;
+    <a href="/layanan-kependudukan.html">Kependudukan &amp; Pencatatan Sipil</a> &nbsp;/&nbsp;
+    Akta Kematian
+  </div>
+</div>
+
+<section class="section" style="padding-top:6px;">
+  <div class="container">
+    <span class="eyebrow">Loket 02 · KTN</span>
+    <h1 style="font-size:1.7rem; margin-top:8px;">Permohonan Akta Kematian</h1>
+    <p class="muted" style="max-width:640px; margin-bottom:28px;">
+      Lengkapi data di bawah ini dan lampirkan foto asli dokumen pendukung. Permohonan akan
+      mendapat nomor tanda terima setelah berhasil dikirim, dan akan diverifikasi oleh petugas.
+    </p>
+
+    <div class="form-shell">
+      <form class="form-card" id="form-kematian" novalidate>
+
+        <div class="form-alert" id="form-alert">
+          <strong>Periksa kembali data berikut:</strong>
+          <ul id="form-alert-list"></ul>
+        </div>
+
+        <fieldset>
+          <legend>Data Jenazah &amp; Keluarga</legend>
+          <div class="field-grid">
+
+            <div class="field is-kk" data-field="no_kk">
+              <label>No KK <span class="req">*</span></label>
+              <input type="text" name="no_kk" inputmode="numeric" maxlength="16" placeholder="16 digit Nomor Kartu Keluarga" required>
+              <span class="hint">16 digit angka sesuai Kartu Keluarga.</span>
+              <span class="error">No KK harus 16 digit angka.</span>
+            </div>
+
+            <div class="field is-nik" data-field="nik_jenazah">
+              <label>NIK Jenazah <span class="req">*</span></label>
+              <input type="text" name="nik_jenazah" inputmode="numeric" maxlength="16" placeholder="16 digit NIK jenazah" required>
+              <span class="error">NIK Jenazah harus 16 digit angka.</span>
+            </div>
+
+            <div class="field" data-field="tempat_kematian">
+              <label>Tempat Kematian <span class="req">*</span></label>
+              <input type="text" name="tempat_kematian" placeholder="Contoh: Tasikmalaya" required>
+              <span class="error">Tempat kematian wajib diisi.</span>
+            </div>
+
+            <div class="field" data-field="tanggal_kematian">
+              <label>Tanggal Kematian <span class="req">*</span></label>
+              <input type="date" name="tanggal_kematian" required>
+              <span class="error">Pilih tanggal kematian yang valid (tidak boleh di masa depan).</span>
+            </div>
+
+            <div class="field" data-field="anak_ke">
+              <label>Anak Ke <span class="req">*</span></label>
+              <input type="number" name="anak_ke" min="1" max="50" placeholder="Contoh: 1" required>
+              <span class="error">Isi angka antara 1–50.</span>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Pelapor &amp; Saksi</legend>
+          <div class="field-grid">
+
+            <div class="field is-nik full" data-field="nik_pelapor">
+              <label>NIK Pelapor <span class="req">*</span></label>
+              <input type="text" name="nik_pelapor" inputmode="numeric" maxlength="16" placeholder="16 digit NIK pelapor" required>
+              <span class="error">NIK Pelapor harus 16 digit angka.</span>
+            </div>
+
+            <div class="field is-nik" data-field="nik_saksi1">
+              <label>NIK Saksi 1 <span class="req">*</span></label>
+              <input type="text" name="nik_saksi1" inputmode="numeric" maxlength="16" placeholder="16 digit NIK" required>
+              <span class="error">NIK Saksi 1 harus 16 digit angka.</span>
+            </div>
+
+            <div class="field is-nik" data-field="nik_saksi2">
+              <label>NIK Saksi 2 <span class="req">*</span></label>
+              <input type="text" name="nik_saksi2" inputmode="numeric" maxlength="16" placeholder="16 digit NIK" required>
+              <span class="error">NIK Saksi 2 harus 16 digit angka.</span>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Dokumen Pendukung (foto asli)</legend>
+          <div class="upload-grid">
+
+            <div class="upload-box" data-field="formulir_f201">
+              <span class="upload-label">1. Formulir F2.01 Kematian <span class="req">*</span></span>
+              <span class="upload-desc">JPG, PNG, WEBP, atau PDF — maks. 5MB.</span>
+              <input type="file" name="formulir_f201" accept=".jpg,.jpeg,.png,.webp,.pdf" required>
+              <span class="error">Berkas wajib diunggah.</span>
+            </div>
+
+            <div class="upload-box" data-field="ktp_el_jenazah">
+              <span class="upload-label">2. KTP-el Jenazah <span class="req">*</span></span>
+              <span class="upload-desc">JPG, PNG, WEBP, atau PDF — maks. 5MB.</span>
+              <input type="file" name="ktp_el_jenazah" accept=".jpg,.jpeg,.png,.webp,.pdf" required>
+              <span class="error">Berkas wajib diunggah.</span>
+            </div>
+
+            <div class="upload-box" data-field="kartu_keluarga">
+              <span class="upload-label">3. Kartu Keluarga Jenazah <span class="req">*</span></span>
+              <span class="upload-desc">JPG, PNG, WEBP, atau PDF — maks. 5MB.</span>
+              <input type="file" name="kartu_keluarga" accept=".jpg,.jpeg,.png,.webp,.pdf" required>
+              <span class="error">Berkas wajib diunggah.</span>
+            </div>
+
+            <div class="upload-box" data-field="keterangan_kematian">
+              <span class="upload-label">4. Keterangan Kematian dari Desa <span class="req">*</span></span>
+              <span class="upload-desc">JPG, PNG, WEBP, atau PDF — maks. 5MB.</span>
+              <input type="file" name="keterangan_kematian" accept=".jpg,.jpeg,.png,.webp,.pdf" required>
+              <span class="error">Berkas wajib diunggah.</span>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-gold" id="submit-btn">Kirim Permohonan</button>
+          <span class="muted" id="submit-status" style="font-size:0.84rem;"></span>
+        </div>
+      </form>
+
+      <aside class="info-card">
+        <h3>Sebelum mengajukan</h3>
+        <ol>
+          <li>Pastikan No KK dan NIK sesuai dokumen resmi (16 digit).</li>
+          <li>Foto dokumen harus jelas terbaca, tidak terpotong, dan asli (bukan fotokopi hasil edit).</li>
+          <li>Permohonan akan mendapat <strong>nomor tanda terima</strong> yang dapat dipakai untuk memantau status.</li>
+          <li>Petugas akan memverifikasi data dalam 1–3 hari kerja.</li>
+        </ol>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <strong>Portal Layanan Dukcapil</strong> — Contoh sistem layanan kependudukan &amp; pencatatan sipil daring.
+  </div>
+</footer>
+
+<!-- Tiket tanda terima -->
+<div class="ticket-overlay" id="ticket-overlay">
+  <div class="ticket">
+    <div class="stamp">DITERIMA<br>SISTEM</div>
+    <div class="ticket-top">
+      <span class="ticket-eyebrow">Tanda Terima Permohonan</span>
+      <div class="ticket-number" id="ticket-number">KTN-00000000-0000</div>
+      <span class="muted" style="font-size:0.82rem;">Akta Kematian</span>
+    </div>
+    <div class="ticket-bottom">
+      <div class="ticket-row"><span>NIK Jenazah</span><strong id="ticket-nama">-</strong></div>
+      <div class="ticket-row"><span>Tanggal Pengajuan</span><strong id="ticket-tanggal">-</strong></div>
+      <div class="ticket-row"><span>Status</span><strong>Menunggu Verifikasi</strong></div>
+    </div>
+    <button class="btn btn-block ticket-close" id="ticket-close">Tutup</button>
+  </div>
+</div>
+
+<script src="/js/form-common.js"></script>
+<script src="/js/form-kematian.js"></script>
+</body>
+</html>
