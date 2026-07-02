@@ -43,11 +43,13 @@
     <div class="admin-toolbar">
       <input type="text" id="filter-klh" placeholder="Cari nomor tracking / nama bayi...">
       <button class="btn" id="refresh-klh" type="button">Muat Ulang</button>
+      <button class="btn btn-danger" id="hapus-massal-klh" type="button" disabled>Hapus yang Dipilih (0)</button>
     </div>
     <div style="overflow-x:auto; margin-bottom:36px;">
       <table class="admin-table" id="table-klh">
         <thead>
           <tr>
+            <th><input type="checkbox" id="checkall-klh"></th>
             <th>Tracking</th>
             <th>Nama Bayi</th>
             <th>No KK</th>
@@ -58,7 +60,7 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody><tr><td colspan="8" class="muted">Memuat data...</td></tr></tbody>
+        <tbody><tr><td colspan="9" class="muted">Memuat data...</td></tr></tbody>
       </table>
     </div>
 
@@ -66,11 +68,13 @@
     <div class="admin-toolbar">
       <input type="text" id="filter-ktn" placeholder="Cari nomor tracking / NIK jenazah...">
       <button class="btn" id="refresh-ktn" type="button">Muat Ulang</button>
+      <button class="btn btn-danger" id="hapus-massal-ktn" type="button" disabled>Hapus yang Dipilih (0)</button>
     </div>
     <div style="overflow-x:auto;">
       <table class="admin-table" id="table-ktn">
         <thead>
           <tr>
+            <th><input type="checkbox" id="checkall-ktn"></th>
             <th>Tracking</th>
             <th>NIK Jenazah</th>
             <th>No KK</th>
@@ -81,7 +85,26 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody><tr><td colspan="8" class="muted">Memuat data...</td></tr></tbody>
+        <tbody><tr><td colspan="9" class="muted">Memuat data...</td></tr></tbody>
+      </table>
+    </div>
+
+    <h2 style="font-size:1.05rem; margin-top:36px;">Riwayat Penghapusan (Audit Log)</h2>
+    <div class="admin-toolbar">
+      <button class="btn" id="refresh-audit" type="button">Muat Ulang</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="admin-table" id="table-audit">
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>Jenis Data</th>
+            <th>Nomor Tracking</th>
+            <th>Ringkasan Data yang Dihapus</th>
+            <th>Dihapus Oleh</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="5" class="muted">Memuat data...</td></tr></tbody>
       </table>
     </div>
 

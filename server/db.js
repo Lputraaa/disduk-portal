@@ -69,6 +69,24 @@ CREATE TABLE IF NOT EXISTS counters (
 );
 `);
 
+// ---------------------------------------------------------------------------
+// Audit log: mencatat jejak setiap penghapusan data permohonan, supaya tetap
+// bisa dipertanggungjawabkan siapa yang menghapus, kapan, dan data apa yang
+// dihapus — meskipun datanya sendiri sudah dihapus permanen dari tabel asal.
+// ---------------------------------------------------------------------------
+db.exec(`
+CREATE TABLE IF NOT EXISTS audit_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  aksi TEXT NOT NULL,
+  jenis_data TEXT NOT NULL,
+  data_id INTEGER NOT NULL,
+  nomor_tracking TEXT,
+  ringkasan_data TEXT NOT NULL,
+  dihapus_oleh TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+`);
+
 /**
  * Menghasilkan nomor tracking berurutan per hari, contoh:
  * KLH-20260624-0001, KTN-20260624-0001

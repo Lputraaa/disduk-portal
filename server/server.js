@@ -57,7 +57,10 @@ function requireAdminAuth(req, res, next) {
       Buffer.from(ADMIN_PASS.padEnd(pass.length, '\0'))
     ) && pass.length === ADMIN_PASS.length;
 
-    if (userOk && passOk) return next();
+    if (userOk && passOk) {
+      req.adminUser = user;
+      return next();
+    }
   }
 
   res.setHeader('WWW-Authenticate', 'Basic realm="Panel Petugas Disduk", charset="UTF-8"');
@@ -76,9 +79,14 @@ app.get('/admin.html', requireAdminAuth, (req, res) => {
 app.get('/api/kelahiran', requireAdminAuth);
 app.get('/api/kelahiran/:id', requireAdminAuth);
 app.patch('/api/kelahiran/:id/status', requireAdminAuth);
+app.delete('/api/kelahiran/:id', requireAdminAuth);
+app.post('/api/kelahiran/hapus-massal', requireAdminAuth);
 app.get('/api/kematian', requireAdminAuth);
 app.get('/api/kematian/:id', requireAdminAuth);
 app.patch('/api/kematian/:id/status', requireAdminAuth);
+app.delete('/api/kematian/:id', requireAdminAuth);
+app.post('/api/kematian/hapus-massal', requireAdminAuth);
+app.get('/api/audit-log', requireAdminAuth);
 
 // Lindungi akses dokumen yang diunggah warga (KK, KTP, akta, dll).
 app.use('/uploads', requireAdminAuth);
@@ -158,6 +166,20 @@ function cleanupFiles(filesObj) {
   });
 }
 
+// Menghapus file fisik di disk berdasarkan path relatif yang tersimpan di DB,
+   // misal "/uploads/kelahiran/169...-abcd.pdf". Dipakai saat penghapusan permanen.
+   function deleteStoredFile(relPath) {
+     if (!relPath) return;
+     const abs = path.join(__dirname, '..', relPath);
+     fs.unlink(abs, () => {}); // diamkan kalau file sudah tidak ada
+   }
+
+   function recordAuditLog({ aksi, jenis_data, data_id, nomor_tracking, ringkasan_data, dihapus_oleh }) {
+     db.prepare(`
+       INSERT INTO audit_log (aksi, jenis_data, data_id, nomor_tracking, ringkasan_data, dihapus_oleh)
+       VALUES (?, ?, ?, ?, ?, ?)
+     `).run(aksi, jenis_data, data_id, nomor_tracking || null, ringkasan_data, dihapus_oleh);
+   }
 // ---------------------------------------------------------------------------
 // API: Akta Kelahiran
 // ---------------------------------------------------------------------------
@@ -248,6 +270,56 @@ app.patch('/api/kelahiran/:id/status', (req, res) => {
   res.json({ ok: true });
 });
 
+// Menghapus satu permohonan akta kelahiran secara permanen: hapus baris di
+// DB, hapus file dokumen terkait di disk, dan catat jejaknya ke audit_log.
+app.delete('/api/kelahiran/:id', (req, res) => {
+  const row = db.prepare('SELECT * FROM akta_kelahiran WHERE id = ?').get(req.params.id);
+  if (!row) return res.status(404).json({ ok: false, errors: ['Data tidak ditemukan.'] });
+
+  db.prepare('DELETE FROM akta_kelahiran WHERE id = ?').run(req.params.id);
+
+  [row.file_formulir_f201, row.file_kartu_keluarga, row.file_buku_nikah, row.file_keterangan_lahir]
+    .forEach(deleteStoredFile);
+
+  recordAuditLog({
+    aksi: 'hapus',
+    jenis_data: 'akta_kelahiran',
+    data_id: row.id,
+    nomor_tracking: row.nomor_tracking,
+    ringkasan_data: `Bayi: ${row.nama_lengkap_bayi}, No KK: ${row.no_kk}, Tgl Lahir: ${row.tanggal_lahir}`,
+    dihapus_oleh: req.adminUser || 'tidak diketahui',
+  });
+
+  res.json({ ok: true });
+});
+
+// Menghapus banyak permohonan akta kelahiran sekaligus, body: { ids: [1,2,3] }
+app.post('/api/kelahiran/hapus-massal', (req, res) => {
+  const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(Number).filter(Number.isInteger) : [];
+  if (!ids.length) return res.status(400).json({ ok: false, errors: ['Tidak ada data yang dipilih.'] });
+
+  let dihapus = 0;
+  for (const id of ids) {
+    const row = db.prepare('SELECT * FROM akta_kelahiran WHERE id = ?').get(id);
+    if (!row) continue;
+
+    db.prepare('DELETE FROM akta_kelahiran WHERE id = ?').run(id);
+    [row.file_formulir_f201, row.file_kartu_keluarga, row.file_buku_nikah, row.file_keterangan_lahir]
+      .forEach(deleteStoredFile);
+
+    recordAuditLog({
+      aksi: 'hapus',
+      jenis_data: 'akta_kelahiran',
+      data_id: row.id,
+      nomor_tracking: row.nomor_tracking,
+      ringkasan_data: `Bayi: ${row.nama_lengkap_bayi}, No KK: ${row.no_kk}, Tgl Lahir: ${row.tanggal_lahir}`,
+      dihapus_oleh: req.adminUser || 'tidak diketahui',
+    });
+    dihapus += 1;
+  }
+
+  res.json({ ok: true, dihapus });
+});
 // ---------------------------------------------------------------------------
 // API: Akta Kematian
 // ---------------------------------------------------------------------------
@@ -336,6 +408,62 @@ app.patch('/api/kematian/:id/status', (req, res) => {
     .run(status, catatan_petugas || null, req.params.id);
   if (info.changes === 0) return res.status(404).json({ ok: false, errors: ['Data tidak ditemukan.'] });
   res.json({ ok: true });
+});
+
+// Menghapus satu permohonan akta kematian secara permanen.
+app.delete('/api/kematian/:id', (req, res) => {
+  const row = db.prepare('SELECT * FROM akta_kematian WHERE id = ?').get(req.params.id);
+  if (!row) return res.status(404).json({ ok: false, errors: ['Data tidak ditemukan.'] });
+
+  db.prepare('DELETE FROM akta_kematian WHERE id = ?').run(req.params.id);
+
+  [row.file_formulir_f201, row.file_ktp_el_jenazah, row.file_kartu_keluarga, row.file_keterangan_kematian]
+    .forEach(deleteStoredFile);
+
+  recordAuditLog({
+    aksi: 'hapus',
+    jenis_data: 'akta_kematian',
+    data_id: row.id,
+    nomor_tracking: row.nomor_tracking,
+    ringkasan_data: `NIK Jenazah: ${row.nik_jenazah}, No KK: ${row.no_kk}, Tgl Kematian: ${row.tanggal_kematian}`,
+    dihapus_oleh: req.adminUser || 'tidak diketahui',
+  });
+
+  res.json({ ok: true });
+});
+
+// Menghapus banyak permohonan akta kematian sekaligus, body: { ids: [1,2,3] }
+app.post('/api/kematian/hapus-massal', (req, res) => {
+  const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(Number).filter(Number.isInteger) : [];
+  if (!ids.length) return res.status(400).json({ ok: false, errors: ['Tidak ada data yang dipilih.'] });
+
+  let dihapus = 0;
+  for (const id of ids) {
+    const row = db.prepare('SELECT * FROM akta_kematian WHERE id = ?').get(id);
+    if (!row) continue;
+
+    db.prepare('DELETE FROM akta_kematian WHERE id = ?').run(id);
+    [row.file_formulir_f201, row.file_ktp_el_jenazah, row.file_kartu_keluarga, row.file_keterangan_kematian]
+      .forEach(deleteStoredFile);
+
+    recordAuditLog({
+      aksi: 'hapus',
+      jenis_data: 'akta_kematian',
+      data_id: row.id,
+      nomor_tracking: row.nomor_tracking,
+      ringkasan_data: `NIK Jenazah: ${row.nik_jenazah}, No KK: ${row.no_kk}, Tgl Kematian: ${row.tanggal_kematian}`,
+      dihapus_oleh: req.adminUser || 'tidak diketahui',
+    });
+    dihapus += 1;
+  }
+
+  res.json({ ok: true, dihapus });
+});
+
+// Menampilkan riwayat audit log (siapa menghapus apa dan kapan), terbaru dulu.
+app.get('/api/audit-log', (req, res) => {
+  const rows = db.prepare('SELECT * FROM audit_log ORDER BY id DESC LIMIT 200').all();
+  res.json({ ok: true, data: rows });
 });
 
 // Fallback 404 untuk rute API

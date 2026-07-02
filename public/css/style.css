@@ -1,31 +1,40 @@
 /* ==========================================================================
    DESIGN TOKENS
-   Palette terinspirasi dari meja loket kantor catatan sipil: kertas formulir
-   (parchment), tinta cap resmi (merah), sampul buku register (navy), dan
-   benang emas pada segel dokumen.
+   Palette resmi Kabupaten Tasikmalaya — Design System Kab. Tasikmalaya.
+   Warna primer: Kuning (#FFC42F), Hijau (#12A64E), Biru Tua (#075463).
+   Warna sekunder: Biru Muda (#0A9AB0), Biru Langit (#75B9CA).
    ========================================================================== */
 :root {
-  --color-bg: #f6f2e8;
-  --color-bg-alt: #efe9d8;
-  --color-ink: #1c2333;
-  --color-navy: #1f3a5f;
-  --color-navy-dark: #142a47;
-  --color-gold: #b6862e;
-  --color-gold-light: #d9aa55;
-  --color-stamp: #9a2e2e;
-  --color-line: #d8d0ba;
-  --color-muted: #6b6557;
-  --color-white: #fffdf8;
+  /* Warna primer Kab. Tasikmalaya */
+  --color-kuning: #FFC42F;
+  --color-kuning-light: #FFD76B;
+  --color-hijau: #12A64E;
+  --color-hijau-dark: #0D7A3A;
+  --color-biru-tua: #075463;
+  --color-biru-muda: #0A9AB0;
+  --color-biru-langit: #75B9CA;
+
+  /* Mapping ke variabel yang dipakai di seluruh CSS */
+  --color-bg: #f0f7f9;
+  --color-bg-alt: #e0f0f4;
+  --color-ink: #0d2a30;
+  --color-navy: #075463;
+  --color-navy-dark: #053d49;
+  --color-gold: #FFC42F;
+  --color-gold-light: #FFD76B;
+  --color-stamp: #12A64E;
+  --color-line: #b5d8e0;
+  --color-muted: #3d6b76;
+  --color-white: #ffffff;
 
   --font-display: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
   --font-body: 'Inter', -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
 
   --radius: 4px;
-  --shadow-card: 0 1px 2px rgba(28, 35, 51, 0.06), 0 8px 24px -8px rgba(28, 35, 51, 0.18);
+  --shadow-card: 0 1px 2px rgba(7, 84, 99, 0.06), 0 8px 24px -8px rgba(7, 84, 99, 0.18);
   --container: 1080px;
 }
-
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
@@ -105,6 +114,12 @@ h1, h2, h3 {
   flex-shrink: 0;
 }
 
+.brand-logo {
+  height: 48px;
+  width: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
 .brand-text .brand-title {
   font-family: var(--font-display);
   font-size: 1.05rem;
@@ -280,9 +295,10 @@ h1, h2, h3 {
   transition: background 0.15s ease;
 }
 
-.btn:hover { background: var(--color-navy-dark); }
 .btn-gold { background: var(--color-gold); color: var(--color-navy-dark); }
 .btn-gold:hover { background: var(--color-gold-light); }
+.btn-danger { background: #b3261e; color: #fff; }
+.btn-danger:hover { background: #8c1d17; }
 .btn-block { width: 100%; justify-content: center; }
 .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
 
