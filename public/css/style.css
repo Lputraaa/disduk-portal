@@ -316,6 +316,50 @@ h1, h2, h3 {
   .form-shell { grid-template-columns: 1fr; }
 }
 
+/* ==========================================================================
+   RESPONSIVE — Mobile (max 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+
+  /* Header */
+  .site-header .container {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .header-nav {
+    gap: 16px;
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+  }
+  .brand-logo { height: 36px; }
+
+  /* Hero */
+  .hero { padding: 32px 0 28px; }
+  .hero h1 { font-size: 1.5rem; }
+
+  /* Form */
+  .form-shell { flex-direction: column; }
+  .field-grid { grid-template-columns: 1fr; }
+  .upload-grid { grid-template-columns: 1fr; }
+  .info-card { margin-top: 0; }
+
+  /* Admin tabel */
+  .admin-table { font-size: 0.78rem; }
+  .admin-toolbar { flex-wrap: wrap; gap: 8px; }
+  .admin-toolbar input { width: 100%; }
+  .action-cell { flex-direction: column; align-items: flex-start !important; gap: 6px; }
+
+  /* Ticket */
+  .ticket { margin: 16px; padding: 24px 20px; }
+  .ticket-number { font-size: 1.2rem; }
+
+  /* Service grid */
+  .service-grid { grid-template-columns: 1fr; }
+}
+
 .form-card, .info-card {
   background: var(--color-white);
   border: 1px solid var(--color-line);
