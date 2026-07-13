@@ -73,6 +73,25 @@ app.get('/admin.html', requireAdminAuth, (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'admin.html'));
 });
 
+app.get('/admin-kelahiran.html', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'admin-kelahiran.html'));
+});
+app.get('/admin-kematian.html', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'admin-kematian.html'));
+});
+app.get('/admin-audit.html', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'admin-audit.html'));
+});
+app.get('/js/admin-kelahiran.js', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'js', 'admin-kelahiran.js'));
+});
+app.get('/js/admin-kematian.js', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'js', 'admin-kematian.js'));
+});
+app.get('/js/admin-audit.js', requireAdminAuth, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'js', 'admin-audit.js'));
+});
+
 // Lindungi seluruh API kelahiran & kematian (dipakai oleh panel admin
 // untuk melihat & mengubah status permohonan warga). POST (submit formulir
 // oleh warga) TIDAK diproteksi karena itu memang harus bisa diakses publik.
@@ -91,6 +110,39 @@ app.get('/api/audit-log', requireAdminAuth);
 // Lindungi akses dokumen yang diunggah warga (KK, KTP, akta, dll).
 app.use('/uploads', requireAdminAuth);
 
+// API publik: cek status permohonan berdasarkan nomor tracking + NIK pelapor.
+// Tidak butuh login — dipakai oleh warga di halaman cek-status.html.
+app.get('/api/cek-status', (req, res) => {
+  const { nomor_tracking, nik_pelapor } = req.query;
+  if (!nomor_tracking || !nik_pelapor) {
+    return res.status(400).json({ ok: false, pesan: 'Nomor tracking dan NIK pelapor wajib diisi.' });
+  }
+
+  const tracking = nomor_tracking.trim().toUpperCase();
+  const nik = nik_pelapor.trim();
+
+  // Cek di tabel kelahiran dulu
+  let row = db.prepare(`
+    SELECT nomor_tracking, nama_lengkap_bayi AS nama_pemohon, status, catatan_petugas, updated_at, 'Akta Kelahiran' AS jenis
+    FROM akta_kelahiran
+    WHERE nomor_tracking = ? AND nik_pelapor = ?
+  `).get(tracking, nik);
+
+  // Kalau tidak ketemu, cek di tabel kematian
+  if (!row) {
+    row = db.prepare(`
+      SELECT nomor_tracking, nik_jenazah AS nama_pemohon, status, catatan_petugas, updated_at, 'Akta Kematian' AS jenis
+      FROM akta_kematian
+      WHERE nomor_tracking = ? AND nik_pelapor = ?
+    `).get(tracking, nik);
+  }
+
+  if (!row) {
+    return res.status(404).json({ ok: false, pesan: 'Data tidak ditemukan. Periksa kembali nomor tracking dan NIK pelapor.' });
+  }
+
+  res.json({ ok: true, data: row });
+});
 app.use(express.static(PUBLIC_DIR));
 
 // ---------------------------------------------------------------------------
