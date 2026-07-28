@@ -39,84 +39,67 @@
 <section class="section">
   <div class="container">
     <span class="eyebrow">Internal</span>
-    <h1 style="font-size:1.6rem;">Panel Verifikasi Petugas</h1>
+    <h1 style="font-size:1.6rem;">Dashboard</h1>
 
-    <div class="notice-box" style="margin-bottom:24px;">
-      <strong>Peringatan keamanan:</strong> Halaman ini hanyalah contoh tampilan data (demo), <strong>belum memiliki
-      autentikasi/login</strong>. Sebelum digunakan sungguhan, lindungi halaman ini dengan sistem login + kontrol akses
-      berbasis peran (role-based access), audit log, koneksi HTTPS, dan batasi akses hanya untuk petugas berwenang —
-      karena data di sini memuat NIK dan No KK yang termasuk data pribadi yang dilindungi UU PDP.
-    </div>
+    <div id="dashboard-loading" class="muted" style="margin-bottom:24px;">Memuat statistik...</div>
 
-    <h2 style="font-size:1.05rem;">Permohonan Akta Kelahiran</h2>
-    <div class="admin-toolbar">
-      <input type="text" id="filter-klh" placeholder="Cari nomor tracking / nama bayi...">
-      <button class="btn" id="refresh-klh" type="button">Muat Ulang</button>
-      <button class="btn btn-danger" id="hapus-massal-klh" type="button" disabled>Hapus yang Dipilih (0)</button>
-    </div>
-    <div style="overflow-x:auto; margin-bottom:36px;">
-      <table class="admin-table" id="table-klh">
-        <thead>
-          <tr>
-            <th><input type="checkbox" id="checkall-klh"></th>
-            <th>Tracking</th>
-            <th>Nama Bayi</th>
-            <th>No KK</th>
-            <th>Tgl Lahir</th>
-            <th>Diajukan</th>
-            <th>Dokumen</th>
-            <th>Status</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody><tr><td colspan="9" class="muted">Memuat data...</td></tr></tbody>
-      </table>
-    </div>
+    <div id="dashboard-content" style="display:none;">
 
-    <h2 style="font-size:1.05rem;">Permohonan Akta Kematian</h2>
-    <div class="admin-toolbar">
-      <input type="text" id="filter-ktn" placeholder="Cari nomor tracking / NIK jenazah...">
-      <button class="btn" id="refresh-ktn" type="button">Muat Ulang</button>
-      <button class="btn btn-danger" id="hapus-massal-ktn" type="button" disabled>Hapus yang Dipilih (0)</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="admin-table" id="table-ktn">
-        <thead>
-          <tr>
-            <th><input type="checkbox" id="checkall-ktn"></th>
-            <th>Tracking</th>
-            <th>NIK Jenazah</th>
-            <th>No KK</th>
-            <th>Tgl Kematian</th>
-            <th>Diajukan</th>
-            <th>Dokumen</th>
-            <th>Status</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody><tr><td colspan="9" class="muted">Memuat data...</td></tr></tbody>
-      </table>
-    </div>
+      <!-- Kartu statistik utama -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px;">
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card); border-top:4px solid var(--color-hijau);">
+          <div style="font-size:0.78rem; font-weight:600; color:var(--color-muted); letter-spacing:.06em; text-transform:uppercase;">Total Akta Kelahiran</div>
+          <div id="stat-klh-total" style="font-size:2.4rem; font-weight:700; color:var(--color-navy); margin-top:8px;">-</div>
+          <div style="font-size:0.82rem; color:var(--color-muted); margin-top:4px;">permohonan masuk</div>
+        </div>
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card); border-top:4px solid var(--color-biru-muda);">
+          <div style="font-size:0.78rem; font-weight:600; color:var(--color-muted); letter-spacing:.06em; text-transform:uppercase;">Total Akta Kematian</div>
+          <div id="stat-ktn-total" style="font-size:2.4rem; font-weight:700; color:var(--color-navy); margin-top:8px;">-</div>
+          <div style="font-size:0.82rem; color:var(--color-muted); margin-top:4px;">permohonan masuk</div>
+        </div>
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card); border-top:4px solid var(--color-kuning);">
+          <div style="font-size:0.78rem; font-weight:600; color:var(--color-muted); letter-spacing:.06em; text-transform:uppercase;">Total Semua Permohonan</div>
+          <div id="stat-total" style="font-size:2.4rem; font-weight:700; color:var(--color-navy); margin-top:8px;">-</div>
+          <div style="font-size:0.82rem; color:var(--color-muted); margin-top:4px;">kelahiran + kematian</div>
+        </div>
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card); border-top:4px solid #b3261e;">
+          <div style="font-size:0.78rem; font-weight:600; color:var(--color-muted); letter-spacing:.06em; text-transform:uppercase;">Menunggu Verifikasi</div>
+          <div id="stat-menunggu" style="font-size:2.4rem; font-weight:700; color:#b3261e; margin-top:8px;">-</div>
+          <div style="font-size:0.82rem; color:var(--color-muted); margin-top:4px;">perlu ditindaklanjuti</div>
+        </div>
+      </div>
 
-    <h2 style="font-size:1.05rem; margin-top:36px;">Riwayat Penghapusan (Audit Log)</h2>
-    <div class="admin-toolbar">
-      <button class="btn" id="refresh-audit" type="button">Muat Ulang</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="admin-table" id="table-audit">
-        <thead>
-          <tr>
-            <th>Waktu</th>
-            <th>Jenis Data</th>
-            <th>Nomor Tracking</th>
-            <th>Ringkasan Data yang Dihapus</th>
-            <th>Dihapus Oleh</th>
-          </tr>
-        </thead>
-        <tbody><tr><td colspan="5" class="muted">Memuat data...</td></tr></tbody>
-      </table>
-    </div>
+      <!-- Breakdown status -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;">
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card);">
+          <h3 style="font-size:0.95rem; margin:0 0 16px; color:var(--color-navy);">Status Akta Kelahiran</h3>
+          <div id="status-klh"></div>
+        </div>
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card);">
+          <h3 style="font-size:0.95rem; margin:0 0 16px; color:var(--color-navy);">Status Akta Kematian</h3>
+          <div id="status-ktn"></div>
+        </div>
+      </div>
 
+      <!-- Permohonan terbaru -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card);">
+          <h3 style="font-size:0.95rem; margin:0 0 16px; color:var(--color-navy);">5 Permohonan Kelahiran Terbaru</h3>
+          <table class="admin-table" id="recent-klh" style="font-size:0.82rem;">
+            <thead><tr><th>Tracking</th><th>Nama Bayi</th><th>Status</th></tr></thead>
+            <tbody><tr><td colspan="3" class="muted">Memuat...</td></tr></tbody>
+          </table>
+        </div>
+        <div style="background:#fff; border-radius:8px; padding:24px; box-shadow:var(--shadow-card);">
+          <h3 style="font-size:0.95rem; margin:0 0 16px; color:var(--color-navy);">5 Permohonan Kematian Terbaru</h3>
+          <table class="admin-table" id="recent-ktn" style="font-size:0.82rem;">
+            <thead><tr><th>Tracking</th><th>NIK Jenazah</th><th>Status</th></tr></thead>
+            <tbody><tr><td colspan="3" class="muted">Memuat...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 

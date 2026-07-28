@@ -518,6 +518,38 @@ app.get('/api/audit-log', (req, res) => {
   res.json({ ok: true, data: rows });
 });
 
+// Dashboard statistik: ringkasan jumlah permohonan per status
+app.get('/api/dashboard', requireAdminAuth, (req, res) => {
+  const klhTotal = db.prepare('SELECT COUNT(*) as n FROM akta_kelahiran').get().n;
+  const ktnTotal = db.prepare('SELECT COUNT(*) as n FROM akta_kematian').get().n;
+
+  const klhStatus = db.prepare(`
+    SELECT status, COUNT(*) as n FROM akta_kelahiran GROUP BY status
+  `).all();
+  const ktnStatus = db.prepare(`
+    SELECT status, COUNT(*) as n FROM akta_kematian GROUP BY status
+  `).all();
+
+  const recentKlh = db.prepare(`
+    SELECT nomor_tracking, nama_lengkap_bayi, status, created_at
+    FROM akta_kelahiran ORDER BY id DESC LIMIT 5
+  `).all();
+  const recentKtn = db.prepare(`
+    SELECT nomor_tracking, nik_jenazah, status, created_at
+    FROM akta_kematian ORDER BY id DESC LIMIT 5
+  `).all();
+
+  res.json({
+    ok: true,
+    data: {
+      kelahiran: { total: klhTotal, status: klhStatus },
+      kematian: { total: ktnTotal, status: ktnStatus },
+      recentKlh,
+      recentKtn,
+    }
+  });
+});
+
 // Fallback 404 untuk rute API
 app.use('/api', (req, res) => res.status(404).json({ ok: false, errors: ['Rute tidak ditemukan.'] }));
 
